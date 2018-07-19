@@ -6,43 +6,36 @@
  Wire.begin();
 */
 
-//姿态                     T
-#include "commIMU.h"
+
+//5883
+//MPU6050
+#include "commIMU9d.h"
 /*
 
-//      m/s^2
-//      deg/s
-//       uT
+*/
 
 
-函数1：imuInit();
-用法：初始化函数中调用，要求先开启 Wire.begin();
-参数：无参数
-返回值：无
+#include <Kalman.h> // Source: https://github.com/TKJElectronics/KalmanFilter
+#include <SimpleKalmanFilter.h>
 
-
-class commIMU{
-	public:
-		float AX;
-		float AY;
-		float AZ;
-		float GX;
-		float GY;
-		float GZ;
-		float MX;
-		float MY;
-		float MZ;
-		void getData();
-	private:
-	
-};
-
-函数2：IMU.getData();
-用法：定义IMU然后初始化，再调用getData;
-参数：无参数
-返回值：成功1 失败0
+//TF
+#include "commTF.h"
+/*
 
 */
+
+
+//GPS
+#include "commGPS.h"
+/*
+void GPS_init();
+void location();
+
+bool GPS_Parsing(void);
+double Calculate_GPS_Distance(double lat1, double lng1, double lat2, double lng2);
+*/
+
+
 
 //温湿度sht31
 #include "commSHT.h"
