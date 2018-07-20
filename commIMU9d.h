@@ -23,8 +23,12 @@ class commIMU9d{
 
 	
 };
+double smoothFliterGX(double newRcVal);
+double smoothFliterGY(double newRcVal);
+double smoothFliterGZ(double newRcVal);
+
 	void getRawData(int* x ,int* y,int* z) ;
 	float calculateHeading(int* x ,int* y,int* z);
 	void calibrateMag() ;
-float correctAngle(float heading);
+    float correctAngle(float heading);
 #endif

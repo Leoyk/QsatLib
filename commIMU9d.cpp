@@ -250,9 +250,9 @@ volatile void imu9dInit(){
   I2CwriteByte(MPU6050_ADDRESS,0x1A,0x00);
   
   // Configure gyroscope range
-  I2CwriteByte(MPU6050_ADDRESS,0x1B,GYRO_FULL_SCALE_1000_DPS);
+  I2CwriteByte(MPU6050_ADDRESS,0x1B,GYRO_FULL_SCALE_250_DPS);
   // Configure accelerometers range
-  I2CwriteByte(MPU6050_ADDRESS,0x1C,ACC_FULL_SCALE_8_G);
+  I2CwriteByte(MPU6050_ADDRESS,0x1C,ACC_FULL_SCALE_2_G);
 	
   // PLL with X axis gyroscope reference and disable sleep mode
   I2CwriteByte(MPU6050_ADDRESS,0X6B,01);
@@ -301,24 +301,23 @@ volatile bool commIMU9d::getData(){
   int16_t gz=Buf[12]<<8 | Buf[13];
   
   // Accelerometer +- 8g
-  AX = ((ax + 115)/409.6)/10; 
-  AY = ((ay - 41)/409.6)/10;
-  AZ = ((az + 39)/409.6)/10;  
+  AX = ax + 116; 
+  AY = ay - 41;
+  AZ = az + 39;  
   
-  
-  AX = smoothFliterAX(AX);
-  AY = smoothFliterAY(AY);
-  AZ = smoothFliterAZ(AZ);
+  // AX = smoothFliterAX(AX);
+  // AY = smoothFliterAY(AY);
+  // AZ = smoothFliterAZ(AZ); 
   
   
   // Gyroscope +- 1000
-  GX = (gx - 81)/32.0; 
-  GY = (gy - 22)/32.0;
-  GZ = (gz + 31)/32.0;  
+  GX = gx - 81; 
+  GY = gy - 22;
+  GZ = gz + 31;  
   
-  GX = smoothFliterGX(GX);
-  GY = smoothFliterGY(GY);
-  GZ = smoothFliterGZ(GZ);
+  // GX = smoothFliterGX(GX);
+  // GY = smoothFliterGY(GY);
+  // GZ = smoothFliterGZ(GZ); 
   // Read register Status 1 and wait for the DRDY: Data Ready
  
  int mx,my,mz;
@@ -329,10 +328,10 @@ volatile bool commIMU9d::getData(){
   MY = my*0.3955;
   MZ = mz*0.3955;  
   
-  MX = smoothFliterMX(MX);
-  MY = smoothFliterMY(MY);
-  MZ = smoothFliterMZ(MZ);
-  HEAD = 360 - calculateHeading(&mx,&my,&mz);
+   MX = smoothFliterMX(MX);
+   MY = smoothFliterMY(MY);
+   MZ = smoothFliterMZ(MZ);
+   HEAD = calculateHeading(&mx,&my,&mz);
 }
 
 
