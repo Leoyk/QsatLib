@@ -25,6 +25,8 @@
 */
 
 
+#include"Servo.h"
+
 //GPS
 #include "commGPS.h"
 /*

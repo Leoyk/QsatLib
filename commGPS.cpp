@@ -11,7 +11,6 @@ Adafruit_GPS GPS(&GPSSerial);
 
 
 
-
  unsigned char  engga[14]={  
 0XB5,0x62,0x06,0x01,0x06,0x00,0xF0,0x00,0x00,0x01,0x00,0x00,0xFE,0x18 // 使能GGA  
 };  
@@ -89,7 +88,6 @@ Adafruit_GPS GPS(&GPSSerial);
 
 uint32_t timer = millis();
 
-struct commGD commGPS;
 
 
 void GPS_init(void) {
@@ -128,7 +126,7 @@ bool getLocal(struct commGD *commGPS){
   if (timer > millis()) timer = millis();
      
   // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 2000) {
+  if (millis() - timer > 200) {
     timer = millis(); // reset the timer
 	
 	commGPS->sat = GPS.satellites;
@@ -150,7 +148,7 @@ bool getLocal(struct commGD *commGPS){
       Serial3.println("\t"); 	
 	
 	
-  if( commGPS->fix == true && commGPS->fixq == true ) {
+  if( commGPS->fix > 0 && commGPS->fixq > 0) {
 	commGPS->latitude = GPS.latitude;
 	commGPS->longitude = GPS.longitude;
 	commGPS->altitude = GPS.altitude;
@@ -189,7 +187,7 @@ bool getLocal(struct commGD *commGPS){
 void location(struct commGD *commGPS){
 	do {
 	  while(getLocal(commGPS)==0);
-	}while(GPS.HDOP  > 6);
+	}while(commGPS->HDOP  > 7);
 
 }
 
@@ -211,114 +209,28 @@ void GPS_Parsing(struct commGD *test) {
   // if millis() or timer wraps around, we'll just reset it
   if (timer > millis()) timer = millis();
 
-	 
+	
 	 
   // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 2000) {
+  if (millis() - timer > 1000) {
     timer = millis(); // reset the timer     
-	commGPS.sat = GPS.satellites;
-	commGPS.fix = GPS.fix;
-	commGPS.fixq = GPS.fixquality;
-	commGPS.HDOP = GPS.HDOP; 
-    if( commGPS.fix == true ) {
-	commGPS.latitude = GPS.latitude;
-	commGPS.longitude = GPS.longitude;
-	commGPS.altitude = GPS.altitude;
-	commGPS.speed = GPS.speed;
-	commGPS.hour = GPS.hour;
-	commGPS.minu = GPS.minute;
-	commGPS.sece = GPS.seconds;
+	test->sat = GPS.satellites;
+	test->fix = GPS.fix;
+	test->fixq = GPS.fixquality;
+	test->HDOP = GPS.HDOP; 
+    if( test->fix > 0) {
+	test->latitude = GPS.latitude;
+	test->longitude = GPS.longitude;
+	test->altitude = GPS.altitude;
+	test->speed = GPS.speed;
+	test->hour = GPS.hour;
+	test->minu = GPS.minute;
+	test->sece = GPS.seconds;
     }
   }
 }
 
-/*
 
-void task_saftyHandle(void) {
-  
-}
-
-void task_balloon_separation(void) {
-  task_saftyHandle();
-  //
-  if( GPS.fix == true && GPS.fixquality == true && F_takeoff == false) {
-    if( F_GetAlt == false ) {
-
-      
-      takeoff_gps_alt = sys_data.gps_altitude;
-      takeoff_brao_alt = sys_data.baro_altitude;
-      RF_SERIAL.println("Get nowtime ground GPS_Altitude and Baro_Altitude !");
-      RF_SERIAL.print("Ground GPS_Altitude: ");RF_SERIAL.println(takeoff_gps_alt);  
-      RF_SERIAL.print("Ground Baro_Altitude: ");RF_SERIAL.println(takeoff_brao_alt);
-      F_GetAlt = true;
-    }
-    if( ((sys_data.gps_altitude - takeoff_gps_alt) > 50 || (sys_data.baro_altitude - takeoff_brao_alt) > 50) 
-        && F_takeoff == false) {
-      RF_SERIAL.println("ATTENTION ! SPACEBALLON TAKEOFF !");
-      RF_SERIAL.println("ATTENTION ! SPACEBALLON TAKEOFF !");
-      RF_SERIAL.println("ATTENTION ! SPACEBALLON TAKEOFF !");
-      F_takeoff = true;
-      takeoff_monment_time_sec = millis() / 1000;
-    }
-  }
-
-  // 进入飞行上升阶段执行程序
-  if(F_takeoff == true) {
-    static volatile long nowtime = 0;
-    static volatile long lasttime = 0;
-    static volatile long offset_baroAlt = 0;
-      nowtime = millis();
-      // 飞行阶段一：飞行上升到海拔9000米高度，校准气压高度偏差值；每10ms检查一次
-      if( nowtime - lasttime >= 10 && F_9000m_Baro_getOffset == false ) { 
-        lasttime = nowtime;
-
-        // 当GPS海拔高度到达9000，并且还没有补偿气压高度。同时距离释放时间超过30秒
-        if( sys_data.gps_altitude >= 9000 && (nowtime - takeoff_monment_time_sec) >= 30 ) {
-          offset_baroAlt = sys_data.gps_altitude - sys_data.baro_altitude;
-          Safty_9000m_timer = millis();
-          F_9000m_Baro_getOffset = true;
-          RF_SERIAL.println("ATTENTION ! SPACEBALLON RISE TO 9000m !");
-        }
-      }
-      
-    //飞行阶段二：继续上升到海拔12000米高度，准备释放动作
-    if( F_9000m_Baro_getOffset ==true ) {
-      
-      //  Safty_9000m_timer：9000m时启动的安全计时器
-      if( (millis() - Safty_9000m_timer) > 10*1000 ) {
-          RF_SERIAL.println("WARNING ! SAFTY_TIMER_A ACTION !");
-          
-          Action_separation();
-
-          RF_SERIAL.println("ATTENTION ! SEPARATION ACTION !");
-      }
-      
-      //  释放策略A：如果GPS可靠，依赖GPS高程执行释放
-      if( sys_data.gps_altitude > 11000 ) {
-        
-        if( sys_data.gps_altitude > 12000 ) {
-          
-          Action_separation();
-          
-          RF_SERIAL.println("ATTENTION ! SEPARATION ACTION !");
-        }
-      }
-      
-      //  释放策略B：如果GPS不可靠，依赖BARO高程执行释放
-      else {
-
-        if( sys_data.baro_altitude > 12000 ) {
-          
-          Action_separation();
-          
-          RF_SERIAL.println("ATTENTION ! SEPARATION ACTION !");
-        }
-      }
-    }// *** end ->  "if( F_9000m_Baro_getOffset ==true )"
-
-  }// *** end ->  "if(F_takeoff == true)"
-}
-*/
 const double EARTH_RADIUS = 6371.393;
 
  double rad(double d) {
@@ -333,6 +245,5 @@ const double EARTH_RADIUS = 6371.393;
    double s = 2 * asin(sqrt(pow(sin(a/2),2) +
     cos(radLat1)*cos(radLat2)*pow(sin(b/2),2)));
    s = s * EARTH_RADIUS;
-   s = round(s * 10000) / 10000;
    return s;
 }

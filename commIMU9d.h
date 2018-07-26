@@ -25,7 +25,7 @@ class commIMU9d{
 };
 double smoothFliterGX(double newRcVal);
 double smoothFliterGY(double newRcVal);
-double smoothFliterGZ(double newRcVal);
+double smoothFliterGZ(double newRcVal); //dc
 
 	void getRawData(int* x ,int* y,int* z) ;
 	float calculateHeading(int* x ,int* y,int* z);
