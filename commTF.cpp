@@ -34,6 +34,7 @@ File dataFile;
 char logData[10];
 
 #define chipSelect 5 
+#define SER2OUT 
 
 void tfInit(){
 
@@ -44,7 +45,7 @@ void tfInit(){
 }
 
 
-void preFile(){
+void preFile(String *a){
   
   strcpy(logData, "log00.txt");
   
@@ -58,7 +59,7 @@ void preFile(){
   }
 	  
 
-
+  *a = logData;
   dataFile = SD.open(logData, FILE_WRITE);  	  
 }
 
@@ -67,23 +68,42 @@ void openFile(){
 }
 
 
-void iwriteData(int a){   
-	dataFile.print(a);	
-} 
-void iwriteDataLn(int a){ 
-	dataFile.println(a);	
-} 
-void writeData(float a){   
-	dataFile.print(a);	
-} 
-void writeDataLn(float a){ 
-	dataFile.println(a);	
-} 
-void SwriteData(String a){   
+void iwriteData(int a){ 
+#ifdef SER2OUT  
+Serial2.print(a);
+#endif
 
 	dataFile.print(a);	
 } 
-void SwriteDataLn(String a){   
+void iwriteDataLn(int a){ 
+#ifdef SER2OUT  
+Serial2.println(a);
+#endif 
+	dataFile.println(a);	
+} 
+void writeData(float a){  
+#ifdef SER2OUT  
+Serial2.print(a);
+#endif 
+	dataFile.print(a);	
+} 
+void writeDataLn(float a){ 
+#ifdef SER2OUT  
+Serial2.println(a);
+#endif 
+	dataFile.println(a);	
+} 
+void SwriteData(String a){ 
+#ifdef SER2OUT  
+Serial2.print(a);
+#endif  
+
+	dataFile.print(a);	
+} 
+void SwriteDataLn(String a){  
+#ifdef SER2OUT  
+Serial2.println(a);
+#endif 
 
 	dataFile.println(a);	
 } 

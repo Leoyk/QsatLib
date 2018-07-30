@@ -126,7 +126,7 @@ bool getLocal(struct commGD *commGPS){
   if (timer > millis()) timer = millis();
      
   // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 200) {
+  if (millis() - timer > 2000) {
     timer = millis(); // reset the timer
 	
 	commGPS->sat = GPS.satellites;
@@ -134,18 +134,18 @@ bool getLocal(struct commGD *commGPS){
 	commGPS->fixq = GPS.fixquality;
 	commGPS->HDOP = GPS.HDOP;
 	
-      Serial3.print("sat = ");
-      Serial3.print(commGPS->sat);
-      Serial3.print("\t");
-      Serial3.print("fix = ");
-      Serial3.print(commGPS->fix);
-      Serial3.print("\t");
-      Serial3.print("fixq = ");
-      Serial3.print(commGPS->fixq);
-      Serial3.print("\t");
-      Serial3.print("hdop = ");
-      Serial3.print(commGPS->HDOP);
-      Serial3.println("\t"); 	
+      Serial2.print("sat = ");
+      Serial2.print(commGPS->sat);
+      Serial2.print("\t");
+      Serial2.print("fix = ");
+      Serial2.print(commGPS->fix);
+      Serial2.print("\t");
+      Serial2.print("fixq = ");
+      Serial2.print(commGPS->fixq);
+      Serial2.print("\t");
+      Serial2.print("hdop = ");
+      Serial2.print(commGPS->HDOP);
+      Serial2.println("\t"); 	
 	
 	
   if( commGPS->fix > 0 && commGPS->fixq > 0) {
@@ -158,20 +158,20 @@ bool getLocal(struct commGD *commGPS){
 	commGPS->sece = GPS.seconds;
 	
 
-      Serial3.print("la = ");
-      Serial3.print(commGPS->latitude);
-      Serial3.print("\t");
-      Serial3.print("lo = ");
-      Serial3.print(commGPS->longitude);
-      Serial3.print("\t"); 
-      Serial3.print("al = ");
-      Serial3.print(commGPS->altitude);
-      Serial3.println("\t");
-      Serial3.print(commGPS->hour);
-      Serial3.print(":"); 	
-      Serial3.print(commGPS->minu);
-      Serial3.print(":"); 	
-      Serial3.println(commGPS->sece);	
+      Serial2.print("la = ");
+      Serial2.print(commGPS->latitude);
+      Serial2.print("\t");
+      Serial2.print("lo = ");
+      Serial2.print(commGPS->longitude);
+      Serial2.print("\t"); 
+      Serial2.print("al = ");
+      Serial2.print(commGPS->altitude);
+      Serial2.println("\t");
+      Serial2.print(commGPS->hour);
+      Serial2.print(":"); 	
+      Serial2.print(commGPS->minu);
+      Serial2.print(":"); 	
+      Serial2.println(commGPS->sece);	
       return 1;
     }
   else{
@@ -212,13 +212,13 @@ void GPS_Parsing(struct commGD *test) {
 	
 	 
   // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 1000) {
+  if (millis() - timer > 200) {
     timer = millis(); // reset the timer     
 	test->sat = GPS.satellites;
 	test->fix = GPS.fix;
 	test->fixq = GPS.fixquality;
 	test->HDOP = GPS.HDOP; 
-    if( test->fix > 0) {
+    if( test->fix > 0 && test->fixq > 0) {
 	test->latitude = GPS.latitude;
 	test->longitude = GPS.longitude;
 	test->altitude = GPS.altitude;

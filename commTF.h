@@ -6,7 +6,7 @@
 #include <SD.h>
 
 void tfInit();
-void preFile();
+void preFile(String *a);
 
 void openFile();
 void iwriteData(int a);
