@@ -191,7 +191,9 @@ void location(struct commGD *commGPS){
 
 }
 
-
+double DM2DD(double a){
+  return (int)a/100 + fmod(a,100)/60;
+  }
 
 void GPS_Parsing(struct commGD *test) {
 
@@ -231,19 +233,15 @@ void GPS_Parsing(struct commGD *test) {
 }
 
 
-const double EARTH_RADIUS = 6371.393;
+const double EARTH_RADIUS = 6371393;
 
  double rad(double d) {
    return d * PI / 180.0;
 }
 
- double Calculate_GPS_Distance(double lat1, double lng1, double lat2, double lng2) {
-   double radLat1 = rad(lat1);
-   double radLat2 = rad(lat2);
-   double a = radLat1 - radLat2;
-   double b = rad(lng1) - rad(lng2);
-   double s = 2 * asin(sqrt(pow(sin(a/2),2) +
-    cos(radLat1)*cos(radLat2)*pow(sin(b/2),2)));
-   s = s * EARTH_RADIUS;
+ double CalGPSDistance(double lata, double lona, double latb, double lonb) {//m
+   double s = EARTH_RADIUS *acos((sin(rad(lona))*sin(rad(lonb))+cos(rad(lona))*cos(rad(lonb))*cos(rad(latb -lata))));
+   
    return s;
 }
+

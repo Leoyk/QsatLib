@@ -20,11 +20,13 @@ struct commGD{
 		uint8_t sece = 0;
 		
 };
-
+double DM2DD(double a);
 void GPS_init();
 void location(struct commGD *commGPS);
 void GPS_Parsing(struct commGD *commGPS);
-double Calculate_GPS_Distance(double lat1, double lng1, double lat2, double lng2);
+
+double rad(double d);
+double CalGPSDistance(double lata, double lona, double latb, double lonb);//m
 
 
 bool getLocal(struct commGD *commGPS);
