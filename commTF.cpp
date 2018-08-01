@@ -34,7 +34,7 @@ File dataFile;
 char logData[10];
 
 #define chipSelect 5 
-#define SER2OUT 
+//#define SER2OUT 
 
 void tfInit(){
 
