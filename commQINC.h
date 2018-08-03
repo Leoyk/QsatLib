@@ -220,7 +220,7 @@ double data[40];
 
 
 ////无源蜂鸣器控制引脚
-#define bee  47
+#define bee  46
 
 
 
