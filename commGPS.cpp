@@ -3,7 +3,7 @@
 #include <Adafruit_GPS.h>
 
 #define GPSSerial Serial1
-
+#define debugSerial Serial2 
 Adafruit_GPS GPS(&GPSSerial);
 
 #define GPSECHO false
@@ -134,18 +134,18 @@ bool getLocal(struct commGD *commGPS){
 	commGPS->fixq = GPS.fixquality;
 	commGPS->HDOP = GPS.HDOP;
 	
-      Serial2.print("sat = ");
-      Serial2.print(commGPS->sat);
-      Serial2.print("\t");
-      Serial2.print("fix = ");
-      Serial2.print(commGPS->fix);
-      Serial2.print("\t");
-      Serial2.print("fixq = ");
-      Serial2.print(commGPS->fixq);
-      Serial2.print("\t");
-      Serial2.print("hdop = ");
-      Serial2.print(commGPS->HDOP);
-      Serial2.println("\t"); 	
+      debugSerial.print("sat = ");
+      debugSerial.print(commGPS->sat);
+      debugSerial.print("\t");
+      debugSerial.print("fix = ");
+      debugSerial.print(commGPS->fix);
+      debugSerial.print("\t");
+      debugSerial.print("fixq = ");
+      debugSerial.print(commGPS->fixq);
+      debugSerial.print("\t");
+      debugSerial.print("hdop = ");
+      debugSerial.print(commGPS->HDOP);
+      debugSerial.println("\t"); 	
 	
 	
   if( commGPS->fix > 0 && commGPS->fixq > 0) {
@@ -158,20 +158,20 @@ bool getLocal(struct commGD *commGPS){
 	commGPS->sece = GPS.seconds;
 	
 
-      Serial2.print("la = ");
-      Serial2.print(commGPS->latitude);
-      Serial2.print("\t");
-      Serial2.print("lo = ");
-      Serial2.print(commGPS->longitude);
-      Serial2.print("\t"); 
-      Serial2.print("al = ");
-      Serial2.print(commGPS->altitude);
-      Serial2.println("\t");
-      Serial2.print(commGPS->hour);
-      Serial2.print(":"); 	
-      Serial2.print(commGPS->minu);
-      Serial2.print(":"); 	
-      Serial2.println(commGPS->sece);	
+      debugSerial.print("la = ");
+      debugSerial.print(commGPS->latitude);
+      debugSerial.print("\t");
+      debugSerial.print("lo = ");
+      debugSerial.print(commGPS->longitude);
+      debugSerial.print("\t"); 
+      debugSerial.print("al = ");
+      debugSerial.print(commGPS->altitude);
+      debugSerial.println("\t");
+      debugSerial.print(commGPS->hour);
+      debugSerial.print(":"); 	
+      debugSerial.print(commGPS->minu);
+      debugSerial.print(":"); 	
+      debugSerial.println(commGPS->sece);	
       return 1;
     }
   else{
@@ -187,7 +187,7 @@ bool getLocal(struct commGD *commGPS){
 void location(struct commGD *commGPS){
 	do {
 	  while(getLocal(commGPS)==0);
-	}while(commGPS->HDOP  > 7);
+	}while(commGPS->HDOP  > 3);
 
 }
 
@@ -221,27 +221,30 @@ void GPS_Parsing(struct commGD *test) {
 	test->fixq = GPS.fixquality;
 	test->HDOP = GPS.HDOP; 
     if( test->fix > 0 && test->fixq > 0) {
-	test->latitude = GPS.latitude;
-	test->longitude = GPS.longitude;
-	test->altitude = GPS.altitude;
-	test->speed = GPS.speed;
-	test->hour = GPS.hour;
-	test->minu = GPS.minute;
-	test->sece = GPS.seconds;
+		if(test->HDOP < 7){
+			test->latitude = GPS.latitude;
+			test->longitude = GPS.longitude;
+			test->altitude = GPS.altitude;
+			test->speed = GPS.speed;
+			test->hour = GPS.hour;
+			test->minu = GPS.minute;
+			test->sece = GPS.seconds;
+		}
     }
   }
 }
 
 
-const double EARTH_RADIUS = 6371393;
-
  double rad(double d) {
-   return d * PI / 180.0;
-}
-
- double CalGPSDistance(double lata, double lona, double latb, double lonb) {//m
-   double s = EARTH_RADIUS *acos((sin(rad(lona))*sin(rad(lonb))+cos(rad(lona))*cos(rad(lonb))*cos(rad(latb -lata))));
-   
-   return s;
-}
-
+    return d * PI / 180.0;
+ }
+  double CalGPSDistance(double lat1, double lng1, double lat2, double lng2) {
+    double radLat1 = rad(lat1);
+    double radLat2 = rad(lat2);
+    double a = radLat1 - radLat2;
+    double b = rad(lng1) - rad(lng2);
+    double s = 2 * asin(sqrt(pow(sin(a/2),2) +
+     cos(radLat1)*cos(radLat2)*pow(sin(b/2),2)));
+    s = s * 6371393;
+    return s;
+ } 

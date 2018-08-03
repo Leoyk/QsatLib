@@ -156,8 +156,7 @@ double basePressure,pressure,BmpTem,BmpAltitude;
 struct commGD gpsData;
 //地面距离（m）	地面距离缓存	高度缓存
 double distance = 0,disbuf = 0,altbuf = 500;
-//初定位时间
-long baseTime;
+
 
 
 ////电池电压
@@ -221,7 +220,7 @@ double data[40];
 
 
 ////无源蜂鸣器控制引脚
-#define bee  46
+#define bee  47
 
 
 
