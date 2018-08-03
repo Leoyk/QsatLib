@@ -36,6 +36,7 @@ data
 
 19:AX	20:AY	21:AZ	22:GX	23:GY	24:GZ	25:MX	26:MY	27:MZ	28:PITCH	29:ROLL	30:YAW	31:G
 
+32：batteryValtage	33：takeOffInfo
 
 
 **************************/
