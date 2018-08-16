@@ -19,6 +19,10 @@ struct commGD{
 		uint8_t hour = 0;
 		uint8_t sece = 0;
 		
+		uint8_t year = 0;
+		uint8_t month = 0;
+		uint8_t day = 0;
+		
 };
 double DM2DD(double a);
 void GPS_init();
