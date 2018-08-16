@@ -153,9 +153,14 @@ bool getLocal(struct commGD *commGPS){
 	commGPS->longitude = GPS.longitude;
 	commGPS->altitude = GPS.altitude;
 	commGPS->speed = GPS.speed;
+	
 	commGPS->hour = GPS.hour;
 	commGPS->minu = GPS.minute;
 	commGPS->sece = GPS.seconds;
+
+	commGPS->year = GPS.year;
+	commGPS->month = GPS.month;
+	commGPS->day = GPS.day;
 	
 
       debugSerial.print("la = ");
@@ -187,7 +192,7 @@ bool getLocal(struct commGD *commGPS){
 void location(struct commGD *commGPS){
 	do {
 	  while(getLocal(commGPS)==0);
-	}while(commGPS->HDOP  > 3);
+	}while(commGPS->HDOP  > 3 || commGPS->HDOP <= 0);
 
 }
 
@@ -221,14 +226,17 @@ void GPS_Parsing(struct commGD *test) {
 	test->fixq = GPS.fixquality;
 	test->HDOP = GPS.HDOP; 
     if( test->fix > 0 && test->fixq > 0) {
-		if(test->HDOP < 7){
+		if(test->HDOP < 7 && test->HDOP > 0){
 			test->latitude = GPS.latitude;
 			test->longitude = GPS.longitude;
 			test->altitude = GPS.altitude;
 			test->speed = GPS.speed;
 			test->hour = GPS.hour;
 			test->minu = GPS.minute;
-			test->sece = GPS.seconds;
+			test->sece = GPS.seconds;	
+			test->year = GPS.year;
+			test->month = GPS.month;
+			test->day = GPS.day;
 		}
     }
   }
