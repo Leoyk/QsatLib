@@ -142,6 +142,7 @@ void getTH(float *t,float *h);
 
 ////servo	舵机ser
 Servo ser;
+Servo ser1;
 
 
 ////SHT31	空气温、湿度
@@ -209,6 +210,8 @@ int cntNum = 0;
 int takeFlag = 0;
 ////释放信息
 int takeOffInfo = 0;
+
+int takeOffFlagCount = 0;
 
   int sf;
   char ck[7] ={'S','h','i','F','a','n','g'};
